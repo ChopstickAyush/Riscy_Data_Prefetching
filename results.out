@@ -1,40 +1,24 @@
-File name is: 1.txt
-CPU 0 cumulative IPC: 1.16453 instructions: 10000001 cycles: 8587160
-L1D PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-L1D PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-L2C PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-L2C PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-LLC PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-LLC PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-File name is: 16.txt
-CPU 0 cumulative IPC: 1.16453 instructions: 10000001 cycles: 8587160
-L1D PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-L1D PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-L2C PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-L2C PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-LLC PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-LLC PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-File name is: 2.txt
-CPU 0 cumulative IPC: 1.16453 instructions: 10000001 cycles: 8587160
-L1D PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-L1D PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-L2C PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-L2C PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-LLC PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-LLC PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-File name is: 4.txt
-CPU 0 cumulative IPC: 1.16453 instructions: 10000001 cycles: 8587160
-L1D PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-L1D PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-L2C PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-L2C PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-LLC PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-LLC PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-File name is: 8.txt
-CPU 0 cumulative IPC: 1.16453 instructions: 10000001 cycles: 8587160
-L1D PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-L1D PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-L2C PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-L2C PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
-LLC PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
-LLC PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:          0  USELESS:          0
+File name is: 403.gcc-16B.champsimtrace.xz-bimodal-no-ipcp-ipcp-ipcp-lru-1core.txt
+CPU 0 cumulative IPC: 1.16402 instructions: 1000001 cycles: 859093
+L1D PREFETCH  ACCESS:       5813  HIT:       5039  MISS:        774
+L1D PREFETCH  REQUESTED:       6401  ISSUED:       6353  USEFUL:        221  USELESS:        524
+L2C PREFETCH  ACCESS:       1540  HIT:        393  MISS:       1147
+L2C PREFETCH  REQUESTED:       1137  ISSUED:       1122  USEFUL:         85  USELESS:        665
+LLC PREFETCH  ACCESS:       1152  HIT:        643  MISS:        509
+LLC PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:         54  USELESS:          0
+File name is: 403.gcc-16B.champsimtrace.xz-bimodal-no-ipcp_o-ipcp-ipcp-lru-1core.txt
+CPU 0 cumulative IPC: 1.16402 instructions: 1000001 cycles: 859093
+L1D PREFETCH  ACCESS:       5813  HIT:       5039  MISS:        774
+L1D PREFETCH  REQUESTED:       6401  ISSUED:       6353  USEFUL:        221  USELESS:        524
+L2C PREFETCH  ACCESS:       1540  HIT:        393  MISS:       1147
+L2C PREFETCH  REQUESTED:       1137  ISSUED:       1122  USEFUL:         85  USELESS:        665
+LLC PREFETCH  ACCESS:       1152  HIT:        643  MISS:        509
+LLC PREFETCH  REQUESTED:          0  ISSUED:          0  USEFUL:         54  USELESS:          0
+File name is: 403.gcc-16B.champsimtrace.xz-bimodal-no-mlop-next_line-next_line-lru-1core.txt
+CPU 0 cumulative IPC: 1.15448 instructions: 1000001 cycles: 866191
+L1D PREFETCH  ACCESS:         34  HIT:         34  MISS:          0
+L1D PREFETCH  REQUESTED:        348  ISSUED:        348  USEFUL:          0  USELESS:          0
+L2C PREFETCH  ACCESS:        811  HIT:        273  MISS:        538
+L2C PREFETCH  REQUESTED:        802  ISSUED:        795  USEFUL:        172  USELESS:        239
+LLC PREFETCH  ACCESS:        646  HIT:        452  MISS:        194
+LLC PREFETCH  REQUESTED:        529  ISSUED:        523  USEFUL:         32  USELESS:          0
