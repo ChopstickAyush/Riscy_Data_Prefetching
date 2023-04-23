@@ -1,84 +1,20 @@
 #include "cache.h"
-#include "mlop.h"
-using namespace L1D_PREF;
-// LLC add nextline
-void CACHE::llc_prefetcher_initialize() 
-{
-  
-  /*=== MLOP Settings ===*/
-    const int BLOCKS_IN_CACHE = CACHE::NUM_SET * CACHE::NUM_WAY;
-    const int BLOCKS_IN_ZONE = PAGE_SIZE / BLOCK_SIZE;
-    const int AMT_SIZE = 32 * BLOCKS_IN_CACHE / BLOCKS_IN_ZONE; /* size of access map table */
 
-    /* maximum possible prefetch degree (the actual prefetch degree is usually much smaller) */
-    const int PREFETCH_DEGREE = 16;
-
-    /* number of score updates before selecting prefetch offsets (thus, it is also the maximum possible score) */
-    const int NUM_UPDATES = 500;
-
-    /* prefetch offsets with `score >= LX_THRESH * NUM_UPDATES` into LX */
-    const double L1D_THRESH = 0.40; 
-    const double L2C_THRESH = 0.30;
-    const double LLC_THRESH = 2.00; /* off */
-    /*======================*/
-
-    /* construct prefetcher for all cores */
-    L1D_PREF::prefetchers =
-        vector<L1D_PREF::MLOP>(NUM_CPUS, L1D_PREF::MLOP(BLOCKS_IN_ZONE, AMT_SIZE, PREFETCH_DEGREE, NUM_UPDATES,
-                                              L1D_THRESH, L2C_THRESH, LLC_THRESH, L1D_PREF::DEBUG_LEVEL));
-  
-}
+void CACHE::llc_prefetcher_initialize() {  }
 
 uint32_t CACHE::llc_prefetcher_operate(
     uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type, uint32_t metadata_in) {
     if (type != LOAD)
-        return 0;
+        return metadata_in;
 
-    uint64_t block_number = addr >> LOG2_BLOCK_SIZE;
+    uint64_t pf_addr = ((addr >> LOG2_BLOCK_SIZE) + 1) << LOG2_BLOCK_SIZE;
+    prefetch_line(ip, addr, pf_addr, FILL_LLC, 0);
 
-    /* check prefetch hit */
-    bool prefetch_hit = false;
-    if (cache_hit == 1) {
-        uint32_t set = get_set(block_number);
-        uint32_t way = get_way(block_number, set);
-        if (block[set][way].prefetch == 1)
-            prefetch_hit = true;
-    }
-
-    /* check trigger access */
-    bool trigger_access = false;
-    if (cache_hit == 0 || prefetch_hit)
-        trigger_access = true;
-
-    if (trigger_access)
-        /* update MLOP with most recent trigger access */
-        L1D_PREF::prefetchers[cpu].access(block_number);
-
-    /* issue prefetches */
-    L1D_PREF::prefetchers[cpu].mark(block_number, L1D_PREF::State::ACCESS);
-    L1D_PREF::prefetchers[cpu].prefetch(ip,addr,metadata_in,this, block_number);
-
-    if (L1D_PREF::DEBUG_LEVEL >= 3) {
-        L1D_PREF::prefetchers[cpu].log();
-        cerr << "=======================================" << dec << endl;
-    }
-
-    /* stats */
-    L1D_PREF::prefetchers[cpu].track(block_number);
     return metadata_in;
 }
 
 uint32_t CACHE::llc_prefetcher_cache_fill(
     uint64_t addr, uint32_t set, uint32_t way, uint8_t prefetch, uint64_t evicted_addr, uint32_t metadata_in) {
-
-    if (this->block[set][way].valid == 0)
-        return 0; /* no eviction */
-
-    uint64_t evicted_block_number = evicted_addr >> LOG2_BLOCK_SIZE;
-    L1D_PREF::prefetchers[cpu].mark(evicted_block_number, L1D_PREF::State::INIT);
-
-    /* stats */
-    L1D_PREF::prefetchers[cpu].track(evicted_block_number);
     return metadata_in;
 }
 

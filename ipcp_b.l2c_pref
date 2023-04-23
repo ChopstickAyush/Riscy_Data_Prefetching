@@ -10,12 +10,7 @@ Biswabandan Panda - biswap@cse.iitk.ac.in
 ******************************************************/
 
 #include "cache.h"
-// #include "mlop.h"
 
-// using namespace L1D_PREF;
-
-#define NUM_SET 256
-#define NUM_WAY 4
 #define NUM_IP_TABLE_L2_ENTRIES 1024
 #define NUM_IP_INDEX_BITS 10
 #define NUM_IP_TAG_BITS 6
@@ -51,55 +46,6 @@ public:
 uint32_t spec_nl_l2[NUM_CPUS] = {0};
 IP_TRACKER trackers[NUM_CPUS][NUM_IP_TABLE_L2_ENTRIES];
 
-
-uint64_t hash_index2(uint64_t key, int index_len) {
-    if (index_len == 0)
-        return key;
-    for (uint64_t tag = (key >> index_len); tag > 0; tag >>= index_len)
-        key ^= tag & ((1 << index_len) - 1);
-    return (key & ((1 << index_len) - 1) );
-}
-
-int findEmptyWays2(uint64_t ip, uint64_t offset, uint8_t cpu)
-{
-    int set = hash_index2(ip + offset, 8);
-    int temp = set * NUM_WAY;
-    for (int w = 0; w < NUM_WAY; w++)
-    {
-        if (trackers[cpu][temp + w].ip_valid == 0)
-        {
-            return (temp + w);
-        }
-    }
-
-    return (temp + rand() % (NUM_WAY)); // choose eviction policy
-}
-
-// f2
-int findHit2(uint64_t ip, uint64_t address, uint64_t offset, uint8_t cpu)
-{
-    int set = hash_index2(ip + offset, 8);
-    int temp = set * NUM_WAY;
-    int address_tag = ((ip + address) & (1 << NUM_IP_TAG_BITS - 1));
-    int replace = -1;
-    for (int w = 0; w < NUM_WAY; w++)
-    {
-        if (trackers[cpu][temp + w].ip_valid == 1)
-        {
-            if (trackers[cpu][temp + w].ip_tag == address_tag)
-            {
-                return (temp + w);
-            }
-            else if (replace < 0)
-            {
-                replace = temp + w;
-            }
-        }
-    }
-
-    return replace;
-}
-
 int decode_stride(uint32_t metadata)
 {
     int stride = 0;
@@ -121,7 +67,8 @@ uint32_t CACHE::l2c_prefetcher_operate(uint64_t addr, uint64_t ip, uint8_t cache
     int prefetch_degree = 0;
     int64_t stride = decode_stride(metadata_in);
     uint32_t pref_type = metadata_in & 0xF00;
-    uint16_t ip_tag = ((ip + addr) & (1 << NUM_IP_TAG_BITS - 1));
+    uint16_t ip_tag = ((ip + addr) >> NUM_IP_INDEX_BITS) & ((1 << NUM_IP_TAG_BITS) - 1);
+
     if (NUM_CPUS == 1)
     {
         if (MSHR.occupancy < (1 * MSHR.SIZE) / 2)
@@ -135,51 +82,30 @@ uint32_t CACHE::l2c_prefetcher_operate(uint64_t addr, uint64_t ip, uint8_t cache
     }
 
     // calculate the index bit
-    // insert
+    int index = (ip) & ((1 << NUM_IP_INDEX_BITS) - 1);
+    if (trackers[cpu][index].ip_tag != ip_tag)
+    { // new/conflict IP
+        if (trackers[cpu][index].ip_valid == 0)
+        { // if valid bit is zero, update with latest IP info
+            trackers[cpu][index].ip_tag = ip_tag;
+            trackers[cpu][index].pref_type = pref_type;
+            trackers[cpu][index].stride = stride;
+        }
+        else
+        {
+            trackers[cpu][index].ip_valid = 0; // otherwise, reset valid bit and leave the previous IP as it is
+        }
 
-    int index = findEmptyWays2(ip, (addr >> LOG2_BLOCK_SIZE) & 0x3F, cpu);
-
-    if (trackers[cpu][index].ip_valid == 1)
-    {
-        trackers[cpu][index].ip_valid = 0;
+        // issue a next line prefetch upon encountering new IP
+        uint64_t pf_address = ((addr >> LOG2_BLOCK_SIZE) + 1) << LOG2_BLOCK_SIZE;
+        prefetch_line(ip, addr, pf_address, FILL_L2, 0);
+        SIG_DP(cout << "1, ");
+        return metadata_in;
     }
     else
-    {
-        trackers[cpu][index].ip_tag = ip_tag;
-
+    { // if same IP encountered, set valid bit
         trackers[cpu][index].ip_valid = 1;
     }
-
-    int hitWay = findHit2(ip, addr, (addr >> LOG2_BLOCK_SIZE) & 0x3F, cpu);
-
-    if (hitWay < 0)
-    {
-        uint64_t pf_address = ((addr >> LOG2_BLOCK_SIZE) + 1) << LOG2_BLOCK_SIZE; // BASE NL=1, changing it to 3
-        prefetch_line(ip, addr, pf_address, FILL_L1, 0);
-        return 0;
-    }
-
-    index = hitWay;
-
-    // int index = ip & ((1 << NUM_IP_INDEX_BITS)-1);
-    //     if(trackers[cpu][index].ip_tag != ip_tag){              // new/conflict IP
-    //         if(trackers[cpu][index].ip_valid == 0){             // if valid bit is zero, update with latest IP info
-    //         trackers[cpu][index].ip_tag = ip_tag;
-    //         trackers[cpu][index].pref_type = pref_type;
-    //         trackers[cpu][index].stride = stride;
-    //     } else {
-    //         trackers[cpu][index].ip_valid = 0;                  // otherwise, reset valid bit and leave the previous IP as it is
-    //     }
-
-    //         // issue a next line prefetch upon encountering new IP
-    //         uint64_t pf_address = ((addr>>LOG2_BLOCK_SIZE)+1) << LOG2_BLOCK_SIZE;
-    //         prefetch_line(ip, addr, pf_address, FILL_L2, 0);
-    //         SIG_DP(cout << "1, ");
-    //         return metadata_in;
-    //     }
-    //     else {                                                  // if same IP encountered, set valid bit
-    //         trackers[cpu][index].ip_valid = 1;
-    //     }
 
     // update the IP table upon receiving metadata from prefetch
     if (type == PREFETCH)
@@ -211,6 +137,19 @@ uint32_t CACHE::l2c_prefetcher_operate(uint64_t addr, uint64_t ip, uint8_t cache
 
                 prefetch_line(ip, addr, pf_address, FILL_L2, 0);
                 SIG_DP(cout << trackers[cpu][index].stride << ", ");
+            }
+        }
+        else if (trackers[cpu][index].pref_type == 0x300)
+        {   
+            int pref_offset = 0;
+            for (int i = 0; i < prefetch_degree; i++)
+            {
+                pref_offset += trackers[cpu][index].stride;
+                uint64_t pf_address = ((cl_addr + pref_offset) << LOG2_BLOCK_SIZE);
+
+                
+                prefetch_line(ip, addr, pf_address, FILL_L2, metadata_in);
+                   
             }
         }
         else if (trackers[cpu][index].pref_type == 0x400 && spec_nl_l2[cpu] > 0)
