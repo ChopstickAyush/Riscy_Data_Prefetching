@@ -225,7 +225,7 @@ void CACHE::l1d_prefetcher_operate(uint64_t addr, uint64_t ip, uint8_t cache_hit
     int spec_nl_threshold = 0;
     int num_prefs = 0;
     uint32_t metadata = 0;
-    uint16_t ip_tag = ((ip + addr) >> NUM_IP_INDEX_BITS) & ((1 << NUM_IP_TAG_BITS) - 1);
+    uint16_t ip_tag = ((ip + cl_addr) >> NUM_IP_INDEX_BITS) & ((1 << NUM_IP_TAG_BITS) - 1);
 
     if (NUM_CPUS == 1)
     {

@@ -67,7 +67,7 @@ uint32_t CACHE::l2c_prefetcher_operate(uint64_t addr, uint64_t ip, uint8_t cache
     int prefetch_degree = 0;
     int64_t stride = decode_stride(metadata_in);
     uint32_t pref_type = metadata_in & 0xF00;
-    uint16_t ip_tag = ((ip + addr) >> NUM_IP_INDEX_BITS) & ((1 << NUM_IP_TAG_BITS) - 1);
+    uint16_t ip_tag = ((ip + cl_addr) >> NUM_IP_INDEX_BITS) & ((1 << NUM_IP_TAG_BITS) - 1);
 
     if (NUM_CPUS == 1)
     {
