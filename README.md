@@ -45,5 +45,5 @@ All of them except sat was tested on WARMUPS = 20M and SIMS = 30M, and sat was t
 | GRAPH   | 1.072    |
 | SAT     | 1.007    |
 | SPEC    | 0.999    |
-| SERVER  | 1.001    |
+| SERVER  | 1.001    | 
 
