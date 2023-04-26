@@ -622,7 +622,7 @@ class MLOP {
     /**
      * @param block_number The block address of the most recent LOAD access
      */
-    void prefetch(uint64_t ip,uint64_t addr,uint32_t metadata ,CACHE *cache, uint64_t block_number) {
+    int prefetch(uint64_t ip,uint64_t addr,uint32_t metadata ,CACHE *cache, uint64_t block_number) {
         if (this->debug_level >= 2) {
             cerr << "MLOP::prefetch(cache=" << cache->NAME << "-" << cache->cpu << ", block_number=0x" << hex
                  << block_number << dec << ")" << endl;
@@ -661,15 +661,16 @@ class MLOP {
                 }
             }
         }
-        if(pf_issued == 0)
-        {   
-            uint64_t pf_address = (block_number+1) << LOG2_BLOCK_SIZE;  
-            cache->prefetch_line(ip, addr, pf_address, FILL_L1, metadata);
-        }
+        // if(pf_issued == 0)
+        // {   
+        //     uint64_t pf_address = (block_number+1) << LOG2_BLOCK_SIZE;  
+        //     cache->prefetch_line(ip, addr, pf_address, FILL_L1, metadata);
+        // }
         if (this->debug_level >= 2) {
             cerr << "[MLOP::prefetch] new_access_map=" << map_to_string(access_map, prefetch_map) << endl;
             cerr << "[MLOP::prefetch] issued " << pf_issued << " prefetch(es)" << endl;
         }
+        return pf_issued;
     }
 
     void mark(uint64_t block_number, State state, int fill_level = 0) {
