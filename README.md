@@ -1,17 +1,17 @@
 # Riscy_Data_Prefetching
 
-This code is developed and maintained by Ayush Agarwal(210050023), Sankalan Baidya(210050141) and Soham Joshi(2100510004) as a part of the CS230 -course project as a part of the spring semester of the academic year 2022-23.
+This code is developed and maintained by Ayush Agarwal(210050023), Sankalan Baidya(210050141) and Soham Joshi(2100510004) as a part of the CS230 Computer Architecture course project under professor Biswanandan Panda in the spring semester of the academic year 2022-23.
 
 All the testing and implementation are done using [Champsim](https://github.com/ChampSim/ChampSim.git)
 
 ```
 Instructions for generating results:
-<ol>
-  <li>Install Champsim using the above link</li>
-  <li>Place your prefetchers in the prefetcher folder</li>
-  <li>./build_champsim.sh ${BRANCH} ${L1I_PREFETCHER} ${L1D_PREFETCHER} ${L2C_PREFETCHER} ${LLC_PREFETCHER} ${LLC_REPLACEMENT} ${NUM_CORE} </li>
-  <li> ./run_champsim.sh [BINARY] [N_WARM] [N_SIM] [TRACE] [OPTION] </li>
-</ol>
+
+ $ Install Champsim using the above link
+ $ Place your prefetchers in the prefetcher folder
+ $ ./build_champsim.sh ${BRANCH} ${L1I_PREFETCHER} ${L1D_PREFETCHER} ${L2C_PREFETCHER} ${LLC_PREFETCHER} ${LLC_REPLACEMENT} ${NUM_CORE} 
+ $ ./run_champsim.sh [BINARY] [N_WARM] [N_SIM] [TRACE] [OPTION] 
+
 ```
 
 Our project was improving Data Prefetching technique for SPEC, SAT Solvers, Graph Analytics and Server traces. 
