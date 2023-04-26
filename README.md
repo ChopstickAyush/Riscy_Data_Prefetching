@@ -4,30 +4,14 @@ This code is developed and maintained by Ayush Agarwal(210050023), Sankalan Baid
 
 All the testing and implementation are done using [Champsim](https://github.com/ChampSim/ChampSim.git)
 
+```
 Instructions for generating results:
 <ol>
   <li>Install Champsim using the above link</li>
   <li>Place your prefetchers in the prefetcher folder</li>
-  <li></li>
-  <li>Fourth item</li>
+  <li>./build_champsim.sh ${BRANCH} ${L1I_PREFETCHER} ${L1D_PREFETCHER} ${L2C_PREFETCHER} ${LLC_PREFETCHER} ${LLC_REPLACEMENT} ${NUM_CORE} </li>
+  <li> ./run_champsim.sh [BINARY] [N_WARM] [N_SIM] [TRACE] [OPTION] </li>
 </ol>
-
-```
-# Run simulation
-
-Execute `run_champsim.sh` with proper input arguments. The default `TRACE_DIR` in `run_champsim.sh` is set to `$PWD/dpc3_traces`. <br>
-
-* Single-core simulation: Run simulation with `run_champsim.sh` script.
-```
-
-```
-Usage: ./run_champsim.sh [BINARY] [N_WARM] [N_SIM] [TRACE] [OPTION]
-$ ./run_champsim.sh bimodal-no-no-no-no-lru-1core 1 10 400.perlbench-41B.champsimtrace.xz
-${BINARY}: ChampSim binary compiled by "build_champsim.sh" (bimodal-no-no-lru-1core)
-${N_WARM}: number of instructions for warmup (1 million)
-${N_SIM}:  number of instructinos for detailed simulation (10 million)
-${TRACE}: trace name (400.perlbench-41B.champsimtrace.xz)
-${OPTION}: extra option for "-low_bandwidth" (src/main.cc)
 ```
 
 Our project was improving Data Prefetching technique for SPEC, SAT Solvers, Graph Analytics and Server traces. 
