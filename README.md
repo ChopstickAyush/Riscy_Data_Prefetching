@@ -2,6 +2,8 @@
 
 This code is developed and maintained by Ayush Agarwal(210050023), Sankalan Baidya(210050141) and Soham Joshi(2100510004) as a part of the CS230 -course project as a part of the spring semester of the academic year 2022-23.
 
+All the testing and implementation are done using [Champsim](https://github.com/ChampSim/ChampSim.git)
+
 Our project was improving Data Prefetching technique for SPEC, SAT Solvers, Graph Analytics and Server traces. 
 This work is built upon IPCP 1.0 by Biswa, which uses a bouquet of prefetchers. We are proposing a series of specialized improvements for different categories like Graphs, Sat-solvers, SPEC traces and Server workloads, leading to a prefetcher which performs at par or better than IPCP for most traces. The ideas used in this work have been built upon from the 2nd placed and 3rd placed, DPC3 prefetchers that is Bingo and MLOP. 
 
