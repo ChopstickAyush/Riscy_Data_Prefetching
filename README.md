@@ -1,6 +1,6 @@
 # Riscy_Data_Prefetching
 
-This code is developed and maintained by Ayush Agarwal(210050023), Sankalan Baidya(210050141) and Soham Joshi(2100510004) as a part of the CS230 -course project as a part of the spring semester of the academic year 2022-23.
+This code is developed and maintained by Ayush Agarwal(210050023), Sankalan Baidya(210050141) and Soham Joshi(2100510004) as a part of the CS230 Computer Architecture course project under professor Biswanandan Panda in the spring semester of the academic year 2022-23.
 
 All the testing and implementation are done using [Champsim](https://github.com/ChampSim/ChampSim.git)
 
