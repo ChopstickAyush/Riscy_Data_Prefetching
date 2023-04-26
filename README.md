@@ -4,6 +4,7 @@ This code is developed and maintained by Ayush Agarwal(210050023), Sankalan Baid
 
 Our project was improving Data Prefetching technique for SPEC, SAT Solvers, Graph Analytics and Server traces. 
 This work is built upon IPCP 1.0 by Biswa, which uses a bouquet of prefetchers. We are proposing a series of specialized improvements for different categories like Graphs, Sat-solvers, SPEC traces and Server workloads, leading to a prefetcher which performs at par or better than IPCP for most traces. The ideas used in this work have been built upon from various DPC3 submissions 
+
 Link to the contest: https://dpc3.compas.cs.stonybrook.edu/?final_programs
 
 | Traces  | Speed-up |
