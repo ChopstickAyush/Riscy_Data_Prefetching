@@ -10,6 +10,7 @@
 \usepackage{physics}
 \usepackage{mathtools}
 \usepackage{comment}
+\usepackage{tabularx}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\C}{\mathbb{C}}
@@ -40,7 +41,7 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{A specialized bouquet of instruction prefetchers}
+\title{Bouquet of DPC3 Winners}
 
 
 \author{\IEEEauthorblockN{Ayush Agarwal\IEEEauthorrefmark{1},
@@ -55,7 +56,7 @@ Email: \IEEEauthorrefmark{1} ayushagarwal@cse.iitb.ac.in,
 \maketitle
 
 \begin{abstract}
-This work is built upon IPCP 1.0 by Biswa, which uses a bouquet of prefetchers. We are proposing specialized prefetchers for different categories like Graphs, Sat-solvers, SPEC and Server workloads. This is based upon the intuition that different types of traces will follow different types of access patterns. The ideas used in this work have been built upon from various \verb|DPC3| submissions\cite{b1}\cite{b2}\cite{b3}. % Insert some numbers/results here after result analysis is done
+This work is built upon IPCP 1.0 by Biswa, which uses a bouquet of prefetchers. We are proposing a series of specialized improvements for different categories like Graphs, Sat-solvers, SPEC traces and Server workloads, leading to a prefetcher which performs at par or better than \verb|IPCP| for most traces. The ideas used in this work have been built upon from various \verb|DPC3| submissions\cite{b1}\cite{b2}\cite{b3}. 
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -76,7 +77,13 @@ The authors of \cite{b1} have built an IP (instruction pointer) based prefetcher
 Prefetching in the context of graph analytics has posed a significant challenge in recent times. This is because hardware prefetchers are designed to work well with applications that exhibit predictable memory access patterns. However, graph analytics algorithms, which involve traversing large graphs with irregular memory access patterns, pose a challenge for hardware prefetching. The traversal order of a graph is often dependent on the input data, which makes it difficult for a hardware prefetcher to accurately predict which data to prefetch. Additionally, the size of the graphs used in graph analytics can exceed the capacity of the prefetcher's buffer, making it difficult to store enough prefetched data to improve performance. 
 
 \subsection{Our solution}
-We observed that the \verb|IPCP| prefetcher does a good job of predicting strides but, it essentially uses a 1-way associative cache whenever IP-stride tables are required. That is, it uses only the generic parameter \verb|IP| for indexing. However, the themes described in \cite{b2} help us here as we can modify these look up tables in order to generalise them to \textit{multi-parameter} look up tables. Analogous to the paper, we use \verb|IP| and \verb|IP + addr| as our indices, and a $k$-way associative cache with \verb|IP| used to hash the sets, with \verb|IP + addr| giving us the tag. However, this approach does not work as well as we thought it would. The results are given in fig. \ref{graph_rel_ipc_ass}.
+We observed that the \verb|IPCP| prefetcher does a good job of predicting strides but, it essentially uses a 1-way associative cache whenever IP-stride tables are required. That is, it uses only the generic parameter \verb|IP| for indexing. However, the themes described in \cite{b2} help us here as we can modify these look up tables in order to generalise them to \textit{multi-parameter} look up tables. Analogous to the paper, we use \verb|IP| and \verb|IP + addr| as our indices, and a $k$-way associative cache with \verb|IP| used to hash the sets, with \verb|IP + addr| giving us the tag. Another important motivation for this approach is that the \verb|BINGO| prefetcher \cite{b2} works very well on graph traces as compared to the \verb|IPCP| prefetcher as shown in fig \ref{graph_rel_bingo}
+\begin{figure}
+\includegraphics[scale=0.5]{Images/Bingo/bingovsipcp1.o.png}
+\caption{This figure shows the IPC (instructions per cycle) for IPCP prefetcher, BINGO prefetcher for graph traces. Clearly, BINGO performs better}
+\label{graph_rel_bingo}
+\end{figure}
+However, this approach does not work as well as we thought it would. The results are given in fig. \ref{graph_rel_ipc_ass}.
 \begin{figure}
 \includegraphics[scale=0.5]{Images/associative.png}
 \caption{This figure shows the IPC (instructions per cycle) for IPCP prefetcher, associative table approach, clearly, IPCP is better}
@@ -117,17 +124,17 @@ Prefetching in this context is again a challenge. This is because hardware prefe
 Keeping the previous optimisations, we look to build the prefetcher further. First, let's have a look at the results with these optimisations alone. (ref fig. \ref{sat_ipc} \ref{sat_l1d} \ref{sat_l2c}).
 
 \begin{figure}
-\includegraphics[scale=0.5]{Images/sat_ipc.png}
+\includegraphics[scale=0.5]{Images/Bingo/sat_ipc.png}
 \caption{This figure shows the IPC (instructions per cycle) relative to the IPCP prefetcher, when our prefetcher incorporates next line prefetcher in LLC}
 \label{sat_ipc}
 \end{figure}
 \begin{figure}
-\includegraphics[scale=0.5]{Images/sat_l1d.png}
+\includegraphics[scale=0.5]{Images/Bingo/sat_l1d.png}
 \caption{This figure shows the Accuracy (hits per accesses) in L1D cache level, relative to the IPCP prefetcher, when our prefetcher incorporates next line prefetcher in LLC}
 \label{sat_l1d}
 \end{figure}
 \begin{figure}
-\includegraphics[scale=0.5]{Images/sat_l2c.png}
+\includegraphics[scale=0.5]{Images/Bingo/sat_l2c.png}
 \caption{This figure shows the Accuracy (hits per accesses) in L2 cache level, relative to the IPCP prefetcher, when our prefetcher incorporates next line prefetcher in LLC}
 \label{sat_l2c}
 \end{figure}
@@ -139,37 +146,59 @@ In order to improve the performance, we turn to \cite{b3}. Since \verb|IPCP| is 
 Since \verb|LLC| has a high size, we can explore putting other prefetching policies in LLC and comparing the results as a scope for further improvement.
 
 \section{SPEC traces}
-Why is checking performance on SPEC traces important? This is because the benchmarks developed by SPEC are widely used by industry and academia to measure and compare the performance of different computer systems and components, including processors, memory, storage, and compilers. SPEC benchmarks cover a range of applications and workloads, including scientific and engineering simulations, multimedia processing, and database management.
+Why is checking performance on SPEC traces important? This is because the benchmarks developed by SPEC are widely used by industry and academia to measure and compare the performance of different computer systems and components, including processors, memory, storage, and compilers. SPEC benchmarks cover a range of applications and workloads, including scientific and engineering simulations, multimedia processing, and database management. \\ 
+But, we observe that results in SPEC take a significant fall as shown in fig. \ref{spec_curr}
 
-Let's check the results on SPEC traces with the optimisations done so far.
+\begin{figure}
+\includegraphics[scale=0.5]{Images/Bingo/without_cplx_spec.png}
+\caption{This figure shows the percentage change in IPC of the code so far with IPCP prefetcher as the baseline. We observe that IPC has significant losses for the scheme so far as compared to the IPCP prefetcher}
+\label{spec_curr}
+\end{figure}
 
-% Insert results here
+\subsection{Initial approach}
+In order to do mitigate this, we first tried to introduce the complex stride prefetcher (\verb|CPLX|) in the \verb|L2| cache. The results are shown in fig. \ref{spec_after_opt_intermediate}. As we can see, there is some improvement, but we are still taking significant losses as compared to \verb|IPCP| and there is need for further optimization.
 
+\begin{figure}
+\includegraphics[scale=0.7]{Images/Bingo/incl_cplx.png}
+\caption{This figure shows the percentage change in IPC of the code so far with IPCP prefetcher as the baseline. We see that this improves the IPC, but there are still significant losses}
+\label{spec_after_opt_intermediate}
+\end{figure}
 
+\subsection{Further optimization}
+We need to optimise this further. In order to do so, we tried out the following approach. In order to reduce to losses in SPEC, we observe that replacing \verb|IP + addr| with \verb|IP + cl_addr|, yields a closer comparison with the \verb|IPCP| prefetcher as shown in fig. \ref{spec_after_opt}
 
-\subsection{Our approach}
-We need to optimise this further. In order to do so, we tried out the following approach. In order to reduce to losses in SPEC, we observe that replacing \verb|IP + addr| with \verb|IP + cl_addr| helps. Our observations are given below.
+\begin{figure}
+\includegraphics[scale=0.5]{Images/Bingo/spec_compare.png}
+\caption{This figure shows the percentage change in IPC of our code with IPCP prefetcher as the baseline. We see that there are no significant losses now, and if performs approximately at par.}
+\label{spec_after_opt}
+\end{figure}
 
-% Insert results below
+Hence, we find that this yields an improvement on SPEC and helps us close the gap with \verb|L2| further.
 
+\subsection{More optimization}
+The previous results are at par with \verb|IPCP| (approximately). But, we found that \cite{b3}, i.e. \verb|MLOP| prefetcher performs very well for \verb|cactus| traces in \verb|SPEC|. Hence, we tried integrating the \verb|MLOP| prefetcer in our code at the \verb|L1D| cache. The results (ref fig. \ref{spec_after_opt_cactus}) show minor improvements which is to be expected since \verb|MLOP| is good at cactus traces. For the other traces in \verb|SPEC|, results are unchanged, so we have included this optimization as well in our code.
+
+\begin{figure}
+\includegraphics[scale=0.5]{Images/Bingo/spec_ipc_cac.png}
+\caption{This figure shows the comparison of IPC of our code with IPCP prefetcher and MLOP prefetcher for cactus traces. We see that there minor improvements and MLOP performs better than IPCP at cactus traces}
+\label{spec_after_opt_cactus}
+\end{figure}
 
 \section{Server Workloads}
 Hardware prefetching on server workloads poses a challenge due to reasons quite similar to what we have seen earlier. These workloads often involve a mix of different applications with varying memory access patterns. A hardware prefetcher is designed to predict memory accesses based on a program's access patterns, but in a server environment, applications are frequently switching, making it difficult for the prefetcher to learn the access patterns of each application. Furthermore, server workloads often involve large datasets that can exceed the prefetcher's buffer size, limiting its ability to prefetch data effectively.
 
-Via the current modifications, we observe the following.
+Via the current modifications, we observe the following as shown in fig. \ref{server_comp}
 
-% Insert results here.
+\begin{figure}
+\includegraphics[scale=0.6]{Images/Bingo/server_client_final.png}
+\caption{This figure shows the percentage change in IPC of our code with IPCP prefetcher as the baseline. We see that there are no significant losses, it performs approximately at par.}
+\label{server_comp}
+\end{figure}
 
-\subsection{Our approach}
-We need to optimise this further. In order to do so, we tried out the following approach. 
-
-% TO BE DONE
-
-\section{Results}
-Give a summary of the results here.
+As we can see, it performs at par with the \verb|IPCP| prefetcher. So, we have not made any Server specific modifications in our prefetching policy.
 
 \section*{Conclusion and remarks}
-This report goes through some optimisations which show a sizeable improvement over the prefetchers presented in DPC3, albeit in application specific traces. The final improvements in IPC are approximately 10\% in graph, 10\% in SAT, 10\% in SPEC and 10\% in Server Workloads. (update actual values later)
+This report goes through some optimisations which show a sizeable improvement over the prefetchers presented in DPC3, albeit in application specific traces. The final improvements in IPC are approximately 7\% in graph, 0.7\% in SAT and 0.1\% in Server Workloads, with no improvement in SPEC. Overall, over all traces we observe an improvement of 2\%. The speed-ups we observed are (rounded to 3 decimals), 1.072 for graphs, 1.007 for SAT, 0.999 for SPEC and 1.001 for Server workloads.
 
 \section*{Acknowledgements}
 We would like to thank the instructor of CS230, Biswa, for giving us the opportunity to work on this project which allowed us to explore a taste of real-life research. We would also like to thank all the CS230 teaching assistants for solving queries throughout the labs, which in turn allowed us to have sufficient background to work on this project. 
