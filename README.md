@@ -7,6 +7,8 @@ This work is built upon IPCP 1.0 by Biswa, which uses a bouquet of prefetchers. 
 
 Link to the contest: https://dpc3.compas.cs.stonybrook.edu/?final_programs
 
+Final Speed up are as follows:
+
 | Traces  | Speed-up |
 |---------|----------|
 | GRAPH   | 1.072    |
