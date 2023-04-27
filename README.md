@@ -22,6 +22,10 @@ Link to the contest: https://dpc3.compas.cs.stonybrook.edu/?final_programs
 We made Python scripts to generate data and evaluate results. Because of time limitations, we tested 13 SPEC traces, 10 graph traces, 6 sat traces, and 9 server traces.
 All of them except sat was tested on WARMUPS = 20M and SIMS = 30M, and sat was tested on WARMUPS = 10M and SIMS = 10M. Our prefetcher showed massive improvements on graphs(sometimes 1.25x speedup compared to IPCP), minor improvements in server/sat and a slight decrease in the SPEC subset. 
 
+**FINAL_PREFETCHER** folder contains our final submission, and **ASSOCIATIVE_PREFETCHER** is our intermediate stage prefetcher. **ALL_PLOTS** ccontains all the graphs used in the report/presentation + more. **PYTHON_SCRIPTS** contain the .py files used for generating/plotting data. **dump** can be ignored, as it contains trace results and other stuff, in an unorganized format.
+
+Do read the *report.pdf* if more detailed insight is to be gained about our project.
+
 
 
 | Traces  | Speed-up |
